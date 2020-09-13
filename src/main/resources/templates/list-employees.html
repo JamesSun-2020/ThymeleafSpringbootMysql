@@ -1,0 +1,108 @@
+<!DOCTYPE HTML>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<title>Employees List</title>
+	
+	<!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" 
+    		integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+
+	<script type="text/javascript">
+	
+		function clearSearch() {
+			window.location = "[[@{/employees/list}]]"
+		}
+	
+	</script>
+	
+</head>
+
+<body>
+
+<div class="container">
+	<h3>Employees Directory</h3>
+	<hr>
+	
+				<a th:href="@{/employees/showFormForAdd}" class="btn btn-primary btn-sm mb-3">
+					Add Employee
+				</a>
+				
+			<form th:action="@{/employees/search}">
+				<input type="text" name="keyword" placeholder="search" size="50" th:value="${keyword}" required />
+				&nbsp;
+				<input type="submit" value="Search" class="btn btn-primary btn-sm mb-3" />
+				&nbsp;
+				<input type="button" value="Clear" id="btnClear" class="btn btn-primary btn-sm mb-3" onClick="clearSearch()" />
+			</form>
+			
+	
+	<table class="table table-bordered table-striped">
+		<thead class="thead-dark">
+		<tr>
+			<th><a th:href="@{|/employees/list/${currentPage}?sortField=firstName&sortDir=${reverseSortDir}|}">First Name</a></th>
+			<th><a th:href="@{|/employees/list/${currentPage}?sortField=lastName&sortDir=${reverseSortDir}|}">Last Name</a></th>
+			<th>Email</th>
+			<th>Action</th>
+		</tr>
+		</thead>
+		
+		<tbody>
+			<tr th:each="tempEmployee : ${employees}">
+				<td th:text="${tempEmployee.firstName}"/>
+				<td th:text="${tempEmployee.lastName}"/>
+				<td th:text="${tempEmployee.email}"/>
+				<td><a th:href="@{/employees/showFormForUpdate(employeeId=${tempEmployee.id})}"
+						class="btn btn-info btn-sm">
+						Update
+					</a>
+					|
+					<a th:href="@{/employees/delete(employeeId=${tempEmployee.id})}"
+						class="btn btn-danger btn-sm"
+						onclick="if (!(confirm('Are you sure you want to delete this employee?'))) return false">
+						Delete
+					</a>
+				</td>
+			</tr>
+		
+		</tbody>
+	</table>
+	
+	<!-- add pagination links -->
+	<div th:if="${totalPages > 1}">
+		<div class="row col-sm-10">
+			<div class="col-sm-2">
+				Total Rows: [[${totalItems}]]
+			</div>		
+			
+			<div class="col-sm-1">
+				<span th:each="i:${#numbers.sequence(1, totalPages)}">
+					<a th:if="${currentPage != i}" th:href="@{|/employees/list/${i}?sortField=${sortField}&sortDir=${sortDir}|}">[[${i}]]</a>
+					<span th:unless="${currentPage != i}">[[${i}]]</span>
+				</span>
+			</div>
+			
+			<div class="col-sm-1">
+				<a th:if="${currentPage < totalPages}" th:href="@{|/employees/list/${currentPage+1}?sortField=${sortField}&sortDir=${sortDir}|}">Next</a>
+				<span th:unless="${currentPage < totalPages}">Next</span>
+			</div>
+			
+			<div class="col-sm-1">
+				<a th:if="${currentPage < totalPages}"	th:href="@{|/employees/list/${totalPages}?sortField=${sortField}&sortDir=${sortDir}|}">Last</a>	
+				<span th:unless="${currentPage < totalPages}">Last</span>
+			</div>
+		
+		</div>
+	</div>
+	
+	
+</div>
+
+</body>
+
+</html>
